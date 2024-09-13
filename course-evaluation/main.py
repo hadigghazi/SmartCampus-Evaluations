@@ -9,8 +9,21 @@ import matplotlib.pyplot as plt
 import io
 from fastapi.responses import StreamingResponse
 import numpy as np
+from fastapi.middleware.cors import CORSMiddleware
+from dotenv import load_dotenv
+import os
 
 app = FastAPI()
+
+origins = os.getenv('ORIGINS').split(',')
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=origins, 
+    allow_credentials=True,
+    allow_methods=["*"], 
+    allow_headers=["*"],
+)
 
 model = joblib.load('course_success_model.pkl')
 scaler = joblib.load('scaler.pkl')
