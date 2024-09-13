@@ -10,12 +10,10 @@ import io
 from fastapi.responses import StreamingResponse
 import numpy as np
 from fastapi.middleware.cors import CORSMiddleware
-from dotenv import load_dotenv
-import os
 
 app = FastAPI()
 
-origins = os.getenv('ORIGINS').split(',')
+origins = ["*"]
 
 app.add_middleware(
     CORSMiddleware,
@@ -143,7 +141,7 @@ def create_benchmark_comparison_diagram(data):
                 'labwork_number', 'library_facilities_number', 'extracurricular_number']
     feature_labels = [feature.replace('_number', '') for feature in features]
     values = [data[feature] for feature in features]  # Use data values directly
-    benchmarks = [0.8, 0.7, 0.6, 0.5, 0.5, 0.5]
+    benchmarks = [1.8, 1.7, 1.6, 1.5, 1.5, 1.5]
     
     plt.bar(feature_labels, values, label='Values')
     plt.bar(feature_labels, benchmarks, alpha=0.5, label='Benchmarks')
