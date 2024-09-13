@@ -8,6 +8,7 @@ def explain_model(model, X, scaler):
     X_scaled = scaler.transform(X) 
     explainer = shap.Explainer(model, X_scaled)
     shap_values = explainer(X_scaled)
+    print("SHAP explanation completed.")
     shap.summary_plot(shap_values, X_scaled, feature_names=X.columns)
 
 def evaluate_model():
