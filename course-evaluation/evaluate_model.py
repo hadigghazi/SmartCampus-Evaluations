@@ -14,7 +14,8 @@ def evaluate_model():
     model = joblib.load('course_success_model.pkl')
     scaler = joblib.load('scaler.pkl') 
     
-    print("Model and scaler loaded successfully.")
+    X_test_scaled = scaler.transform(X_test)
+    print("Test data scaling completed.")
 
 if __name__ == "__main__":
     evaluate_model()
