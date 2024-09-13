@@ -163,6 +163,32 @@ def create_benchmark_comparison_diagram(data):
     
     return buf
 
+@app.post("/benchmark-comparison-diagram/")
+def get_benchmark_comparison_diagram(course_instructor_id: int, db: Session = Depends(get_db)):
+    averages = db.query(
+        func.avg(CourseEvaluation.teaching_number).label('teaching_avg'),
+        func.avg(CourseEvaluation.coursecontent_number).label('coursecontent_avg'),
+        func.avg(CourseEvaluation.examination_number).label('examination_avg'),
+        func.avg(CourseEvaluation.labwork_number).label('labwork_avg'),
+        func.avg(CourseEvaluation.library_facilities_number).label('library_facilities_avg'),
+        func.avg(CourseEvaluation.extracurricular_number).label('extracurricular_avg')
+    ).filter(CourseEvaluation.course_instructor_id == course_instructor_id).first()
+
+    if not averages:
+        raise HTTPException(status_code=404, detail="Course instructor data not found")
+    
+    data = {
+        'teaching_number': averages.teaching_avg + 1,
+        'coursecontent_number': averages.coursecontent_avg + 1,
+        'examination_number': averages.examination_avg + 1,
+        'labwork_number': averages.labwork_avg + 1,
+        'library_facilities_number': averages.library_facilities_avg + 1,
+        'extracurricular_number': averages.extracurricular_avg + 1
+    }
+    
+    buf = create_benchmark_comparison_diagram(data)
+    return StreamingResponse(buf, media_type="image/png", headers={"Content-Disposition": "attachment; filename=benchmark_comparison_diagram.png"})
+
 if __name__ == "__main__":
     import uvicorn
     uvicorn.run(app, host="0.0.0.0", port=8000)
