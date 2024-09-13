@@ -8,8 +8,6 @@ from sqlalchemy.sql import func
 import matplotlib.pyplot as plt
 import io
 from fastapi.responses import StreamingResponse
-import pandas as pd
-import seaborn as sns
 import numpy as np
 
 app = FastAPI()
@@ -125,23 +123,6 @@ def get_course_performance_overview(course_instructor_id: int, db: Session = Dep
     
     buf = create_radar_chart(data)
     return StreamingResponse(buf, media_type="image/png", headers={"Content-Disposition": "attachment; filename=course_performance_overview.png"})
-
-def create_normalized_performance_diagram(data):
-    plt.figure(figsize=(10, 6))
-    features = ['teaching_number', 'coursecontent_number', 'examination_number',
-                'labwork_number', 'library_facilities_number', 'extracurricular_number']
-    feature_labels = [feature.replace('_number', '') for feature in features]
-    values = [max(data[feature], 0) + 1 for feature in features]
-    plt.bar(feature_labels, values)
-    plt.xlabel('Features')
-    plt.ylabel('Normalized Value')
-    plt.title('Normalized Performance of Each Attribute')
-    
-    buf = io.BytesIO()
-    plt.savefig(buf, format='png')
-    buf.seek(0)
-    
-    return buf
 
 def create_benchmark_comparison_diagram(data):
     plt.figure(figsize=(10, 6))
