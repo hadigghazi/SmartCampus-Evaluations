@@ -100,6 +100,32 @@ def create_radar_chart(data):
     
     return buf
 
+@app.post("/course-performance-overview/")
+def get_course_performance_overview(course_instructor_id: int, db: Session = Depends(get_db)):
+    averages = db.query(
+        func.avg(CourseEvaluation.teaching_number).label('teaching_avg'),
+        func.avg(CourseEvaluation.coursecontent_number).label('coursecontent_avg'),
+        func.avg(CourseEvaluation.examination_number).label('examination_avg'),
+        func.avg(CourseEvaluation.labwork_number).label('labwork_avg'),
+        func.avg(CourseEvaluation.library_facilities_number).label('library_facilities_avg'),
+        func.avg(CourseEvaluation.extracurricular_number).label('extracurricular_avg')
+    ).filter(CourseEvaluation.course_instructor_id == course_instructor_id).first()
+
+    if not averages:
+        raise HTTPException(status_code=404, detail="Course instructor data not found")
+    
+    data = {
+        'Teaching': averages.teaching_avg,
+        'Course Content': averages.coursecontent_avg,
+        'Examination': averages.examination_avg,
+        'Lab Work': averages.labwork_avg,
+        'Library Facilities': averages.library_facilities_avg,
+        'Extracurricular': averages.extracurricular_avg
+    }
+    
+    buf = create_radar_chart(data)
+    return StreamingResponse(buf, media_type="image/png", headers={"Content-Disposition": "attachment; filename=course_performance_overview.png"})
+
 if __name__ == "__main__":
     import uvicorn
     uvicorn.run(app, host="0.0.0.0", port=8000)
