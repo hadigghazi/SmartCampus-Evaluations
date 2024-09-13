@@ -11,6 +11,9 @@ def main():
     X, y = preprocess_data(df)
     
     print("Class distribution before split:", y.value_counts())
+    
+    X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.3, random_state=42)
+    print("Train-test split completed.")
 
 if __name__ == "__main__":
     main()
