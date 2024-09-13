@@ -3,6 +3,7 @@ import numpy as np
 from sklearn.ensemble import GradientBoostingClassifier
 from sklearn.preprocessing import StandardScaler
 from sklearn.model_selection import train_test_split
+import joblib
 
 def load_data(file_path):
     df = pd.read_excel(file_path)
@@ -43,7 +44,11 @@ def train_model(X, y):
     scaler = StandardScaler()
     X_scaled = scaler.fit_transform(X)
     model.fit(X_scaled, y)
-    return model
+    return model, scaler
+
+def save_model(model, scaler, model_path='model.joblib', scaler_path='scaler.joblib'):
+    joblib.dump(model, model_path)
+    joblib.dump(scaler, scaler_path)
 
 def main():
     file_path = 'finalDataset0.2.xlsx'
@@ -51,9 +56,10 @@ def main():
     X, y = preprocess_data(df)
     
     X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.3, random_state=42)
-    model = train_model(X_train, y_train)
-
-    print("Model training completed.")
+    model, scaler = train_model(X_train, y_train)
+    
+    save_model(model, scaler)
+    print("Model training and saving completed.")
 
 if __name__ == "__main__":
     main()
