@@ -5,7 +5,11 @@ from sqlalchemy import create_engine, Column, Integer, Float, ForeignKey
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker, Session
 from sqlalchemy.sql import func
+import matplotlib.pyplot as plt
+import io
+from fastapi.responses import StreamingResponse
 import pandas as pd
+import seaborn as sns
 import numpy as np
 
 app = FastAPI()
@@ -72,6 +76,29 @@ def predict(course_instructor_id: int, db: Session = Depends(get_db)):
     prediction = model.predict(input_data_scaled)
     
     return {"prediction": prediction[0]}
+
+def create_radar_chart(data):
+    labels = np.array(['Teaching', 'Course Content', 'Examination', 'Lab Work', 'Library Facilities', 'Extracurricular'])
+    values = np.array([data[feature] for feature in labels])
+    num_vars = len(labels)
+    angles = np.linspace(0, 2 * np.pi, num_vars, endpoint=False).tolist()
+    values = np.concatenate((values, [values[0]]))
+    angles += angles[:1]
+    
+    fig, ax = plt.subplots(figsize=(6, 6), subplot_kw=dict(polar=True))
+    ax.fill(angles, values, color='blue', alpha=0.25)
+    ax.plot(angles, values, color='blue', linewidth=2)
+    
+    ax.set_yticklabels([])
+    ax.set_xticks(angles[:-1])
+    ax.set_xticklabels(labels)
+    ax.set_title('Course Performance Overview', size=15, color='blue', y=1.1)
+    
+    buf = io.BytesIO()
+    plt.savefig(buf, format='png')
+    buf.seek(0)
+    
+    return buf
 
 if __name__ == "__main__":
     import uvicorn
