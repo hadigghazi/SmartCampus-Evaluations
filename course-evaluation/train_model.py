@@ -2,7 +2,7 @@ import joblib
 from sklearn.ensemble import GradientBoostingClassifier
 from sklearn.preprocessing import StandardScaler
 from imblearn.over_sampling import SMOTE
-from sklearn.model_selection import train_test_split, cross_val_score
+from sklearn.model_selection import train_test_split, cross_val_score, GridSearchCV
 from preprocess import preprocess_data, load_data
 import pandas as pd
 
@@ -16,12 +16,20 @@ def train_model(X, y):
     
     print("Class distribution after SMOTE:", pd.Series(y_resampled).value_counts())
     
-    scores = cross_val_score(model, X_resampled, y_resampled, cv=5, scoring='accuracy')
-    print("Cross-validation scores:", scores)
-    print("Mean accuracy:", scores.mean())
+    param_grid = {
+        'n_estimators': [50, 100, 150],
+        'learning_rate': [0.01, 0.1, 0.2],
+        'max_depth': [3, 5, 7]
+    }
     
-    model.fit(X_resampled, y_resampled)
-    return model
+    grid_search = GridSearchCV(estimator=model, param_grid=param_grid, cv=5, scoring='accuracy')
+    grid_search.fit(X_resampled, y_resampled)
+    
+    print(f'Best parameters: {grid_search.best_params_}')
+    print(f'Best score: {grid_search.best_score_}')
+    
+    best_model = grid_search.best_estimator_
+    return best_model
 
 def main():
     file_path = 'finalDataset0.2.xlsx'
