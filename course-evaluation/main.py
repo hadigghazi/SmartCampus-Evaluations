@@ -142,6 +142,26 @@ def create_normalized_performance_diagram(data):
     buf.seek(0)
     
     return buf
+def create_benchmark_comparison_diagram(data):
+    plt.figure(figsize=(10, 6))
+    features = ['teaching_number', 'coursecontent_number', 'examination_number',
+                'labwork_number', 'library_facilities_number', 'extracurricular_number']
+    feature_labels = [feature.replace('_number', '') for feature in features]
+    values = [data[feature] for feature in features]  # Use data values directly
+    benchmarks = [0.8, 0.7, 0.6, 0.5, 0.5, 0.5]
+    
+    plt.bar(feature_labels, values, label='Values')
+    plt.bar(feature_labels, benchmarks, alpha=0.5, label='Benchmarks')
+    plt.xlabel('Features')
+    plt.ylabel('Value')
+    plt.title('Feature Values vs. Benchmarks')
+    plt.legend()
+    
+    buf = io.BytesIO()
+    plt.savefig(buf, format='png')
+    buf.seek(0)
+    
+    return buf
 
 if __name__ == "__main__":
     import uvicorn
