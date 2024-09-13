@@ -1,5 +1,6 @@
 import joblib
 from sklearn.model_selection import train_test_split
+from sklearn.metrics import classification_report
 from preprocess import preprocess_data, load_data
 
 def evaluate_model():
@@ -16,7 +17,8 @@ def evaluate_model():
     
     X_test_scaled = scaler.transform(X_test)
     y_pred = model.predict(X_test_scaled)
-    print("Predictions on test data completed.")
+    
+    print(classification_report(y_test, y_pred))
 
 if __name__ == "__main__":
     evaluate_model()
