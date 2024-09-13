@@ -29,6 +29,10 @@ def train_model(X, y):
     print(f'Best score: {grid_search.best_score_}')
     
     best_model = grid_search.best_estimator_
+    
+    joblib.dump(best_model, 'course_success_model.pkl')
+    joblib.dump(scaler, 'scaler.pkl')
+    
     return best_model
 
 def main():
