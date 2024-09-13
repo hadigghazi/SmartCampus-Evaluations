@@ -8,8 +8,8 @@ def explain_model(model, X, scaler):
     X_scaled = scaler.transform(X) 
     explainer = shap.Explainer(model, X_scaled)
     shap_values = explainer(X_scaled)
-    print("SHAP values calculated.")
-    
+    shap.summary_plot(shap_values, X_scaled, feature_names=X.columns)
+
 def evaluate_model():
     file_path = 'finalDataset0.2.xlsx'
     df = load_data(file_path)
