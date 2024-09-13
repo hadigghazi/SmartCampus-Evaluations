@@ -27,14 +27,20 @@ def preprocess_data(df):
     
     for feature, weight in weights.items():
         df[feature] *= weight
-
-    return df
+    
+    features = ['teaching_number', 'coursecontent_number', 'examination_number',
+                'labwork_number', 'library_facilities_number', 'extracurricular_number']
+    
+    X = df[features]
+    y = df['success_category']
+    return X, y
 
 def main():
     file_path = 'finalDataset0.2.xlsx'
     df = load_data(file_path)
-    df = preprocess_data(df)
-    print("Preprocessed data with weights:", df.head())
+    X, y = preprocess_data(df)
+    print("Features:", X.head())
+    print("Labels:", y.head())
 
 if __name__ == "__main__":
     main()
