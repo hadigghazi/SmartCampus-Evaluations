@@ -2,7 +2,7 @@ import joblib
 from sklearn.ensemble import GradientBoostingClassifier
 from sklearn.preprocessing import StandardScaler
 from imblearn.over_sampling import SMOTE
-from sklearn.model_selection import train_test_split
+from sklearn.model_selection import train_test_split, cross_val_score
 from preprocess import preprocess_data, load_data
 import pandas as pd
 
@@ -15,6 +15,10 @@ def train_model(X, y):
     X_resampled, y_resampled = smote.fit_resample(X_scaled, y)
     
     print("Class distribution after SMOTE:", pd.Series(y_resampled).value_counts())
+    
+    scores = cross_val_score(model, X_resampled, y_resampled, cv=5, scoring='accuracy')
+    print("Cross-validation scores:", scores)
+    print("Mean accuracy:", scores.mean())
     
     model.fit(X_resampled, y_resampled)
     return model
