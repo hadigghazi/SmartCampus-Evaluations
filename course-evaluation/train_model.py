@@ -44,8 +44,12 @@ def main():
     
     X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.3, random_state=42)
     
-    model = train_model(X_train, y_train)
-    print("Model training completed.")
+    if len(y_train.unique()) > 1:
+        train_model(X_train, y_train)
+    else:
+        print("Not enough classes in training data.")
+    
+    print("Class distribution in the dataset after preprocessing:", df['success_category'].value_counts())
 
 if __name__ == "__main__":
     main()
