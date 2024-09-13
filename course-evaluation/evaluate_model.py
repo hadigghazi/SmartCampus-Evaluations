@@ -1,14 +1,14 @@
 import joblib
-import shap
-from sklearn.model_selection import train_test_split
 from sklearn.metrics import classification_report
+import shap
 from preprocess import preprocess_data, load_data
+from train_model import train_model
+from sklearn.model_selection import train_test_split
 
 def explain_model(model, X, scaler):
     X_scaled = scaler.transform(X) 
     explainer = shap.Explainer(model, X_scaled)
     shap_values = explainer(X_scaled)
-    print("SHAP explanation completed.")
     shap.summary_plot(shap_values, X_scaled, feature_names=X.columns)
 
 def evaluate_model():
