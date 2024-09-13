@@ -142,6 +142,7 @@ def create_normalized_performance_diagram(data):
     buf.seek(0)
     
     return buf
+
 def create_benchmark_comparison_diagram(data):
     plt.figure(figsize=(10, 6))
     features = ['teaching_number', 'coursecontent_number', 'examination_number',
@@ -188,7 +189,3 @@ def get_benchmark_comparison_diagram(course_instructor_id: int, db: Session = De
     
     buf = create_benchmark_comparison_diagram(data)
     return StreamingResponse(buf, media_type="image/png", headers={"Content-Disposition": "attachment; filename=benchmark_comparison_diagram.png"})
-
-if __name__ == "__main__":
-    import uvicorn
-    uvicorn.run(app, host="0.0.0.0", port=8000)
